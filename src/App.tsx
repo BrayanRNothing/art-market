@@ -7,6 +7,9 @@ import Features from './components/Features';
 import CustomCursor from './components/CustomCursor';
 import ContactModal from './components/ContactModal';
 import AuthModal from './components/AuthModal';
+import MyArt from './components/MyArt';
+import ArtMarket from './components/ArtMarket';
+import ArtDetail from './components/ArtDetail';
 import { useState } from 'react';
 
 function App() {
@@ -15,6 +18,72 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [cursorStatus, setCursorStatus] = useState<'default' | 'success' | 'error' | 'loading'>('default');
+  const [currentView, setCurrentView] = useState<'home' | 'my-art' | 'market' | 'gallery' | 'art-detail'>('home');
+  const [selectedArtId, setSelectedArtId] = useState<string | null>(null);
+
+  // Check for existing session
+  useState(() => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+    
+    if (token && userData) {
+      setIsLoggedIn(true);
+      setUser(JSON.parse(userData));
+    }
+  });
+
+  const handleViewArt = (id: string) => {
+    setSelectedArtId(id);
+    setCurrentView('art-detail');
+  };
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'home':
+        return (
+          <>
+            <Hero />
+            <ArtGallery onArtClick={handleViewArt} />
+            <ArtistInvite />
+            <About />
+            <Features />
+          </>
+        );
+      case 'market':
+        return <ArtMarket />;
+      case 'gallery':
+        return <ArtGallery onArtClick={handleViewArt} />;
+      case 'art-detail':
+        return selectedArtId ? (
+          <ArtDetail 
+            artId={selectedArtId} 
+            onBack={() => setCurrentView(isLoggedIn && currentView === 'art-detail' ? 'gallery' : 'home')} 
+          />
+        ) : <Hero />;
+      case 'my-art':
+        return isLoggedIn ? (
+          <MyArt 
+            user={user} 
+            onArtClick={handleViewArt}
+            onUpdateUser={(updatedUser: any) => {
+              setUser(updatedUser);
+              const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
+              storage.setItem('user', JSON.stringify(updatedUser));
+            }} 
+          />
+        ) : (
+          <>
+            <Hero />
+            <ArtGallery onArtClick={handleViewArt} />
+            <ArtistInvite />
+            <About />
+            <Features />
+          </>
+        );
+      default:
+        return <Hero />;
+    }
+  };
 
   return (
     <main className="bg-black min-h-screen">
@@ -22,10 +91,13 @@ function App() {
       <Navbar
         onContactClick={() => setShowContact(true)}
         onProfileClick={() => setShowAuth(true)}
+        onViewChange={(view: any) => setCurrentView(view)}
         isLoggedIn={isLoggedIn}
         user={user}
+        currentView={currentView as any}
       />
       <ContactModal isOpen={showContact} onClose={() => setShowContact(false)} />
+      
       <AuthModal
         isOpen={showAuth}
         onClose={() => setShowAuth(false)}
@@ -40,6 +112,7 @@ function App() {
         onLogout={() => {
           setIsLoggedIn(false);
           setUser(null);
+          setCurrentView('home');
           setShowAuth(false);
         }}
         onError={() => {
@@ -47,11 +120,8 @@ function App() {
           setTimeout(() => setCursorStatus('default'), 2000);
         }}
       />
-      <Hero />
-      <ArtGallery />
-      <ArtistInvite />
-      <About />
-      <Features />
+
+      {renderContent()}
 
       {/* Footer / Simple spacing at the end */}
       <footer className="bg-black py-12 px-6 border-t border-white/5">

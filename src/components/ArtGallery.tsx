@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
-const ART_PIECES = [
+const STATIC_ART = [
   {
     id: 1,
     title: "Celestial Echo",
@@ -14,24 +15,41 @@ const ART_PIECES = [
     artist: "Marcus Chen",
     price: "$1,850",
     image: "https://images.unsplash.com/photo-1549490349-8643362247b5?q=80&w=1000&auto=format&fit=crop"
-  },
-  {
-    id: 3,
-    title: "Urban Pulse",
-    artist: "Sarah Jenkins",
-    price: "$3,100",
-    image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1000&auto=format&fit=crop"
-  },
-  {
-    id: 4,
-    title: "Silent Horizon",
-    artist: "Oliver North",
-    price: "$2,200",
-    image: "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?q=80&w=1000&auto=format&fit=crop"
   }
 ];
 
-const ArtGallery = () => {
+const ArtGallery = ({ onArtClick }: { onArtClick: (id: any) => void }) => {
+  const [artworks, setArtworks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchArt = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/art');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.length > 0) {
+            setArtworks(data.map((art: any) => ({
+              id: art.id,
+              title: art.title,
+              artist: art.artist_name,
+              price: `${art.price} ETH`,
+              image: art.main_image_url
+            })));
+          } else {
+            setArtworks(STATIC_ART);
+          }
+        } else {
+          setArtworks(STATIC_ART);
+        }
+      } catch (err) {
+        console.error("Error fetching gallery:", err);
+        setArtworks(STATIC_ART);
+      }
+    };
+
+    fetchArt();
+  }, []);
+
   return (
     <section className="bg-black py-24 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
@@ -46,7 +64,7 @@ const ArtGallery = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {ART_PIECES.map((piece, index) => (
+          {artworks.map((piece, index) => (
             <motion.div
               key={piece.id}
               initial={{ opacity: 0, y: 20 }}
@@ -54,6 +72,7 @@ const ArtGallery = () => {
               transition={{ delay: index * 0.1, duration: 0.8 }}
               viewport={{ once: true }}
               className="group cursor-pointer"
+              onClick={() => onArtClick(piece.id)}
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-2xl mb-6">
                 <img 
