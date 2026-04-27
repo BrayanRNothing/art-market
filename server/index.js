@@ -7,8 +7,10 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL?.includes('localhost') ? false : { rejectUnauthorized: false }
 });
 
 app.use(cors());
@@ -21,7 +23,14 @@ app.use((req, res, next) => {
 });
 
 // Ruta de prueba
-app.get('/api/health', (req, res) => res.send('OK'));
+app.get('/api/health', async (req, res) => {
+  try {
+    await pool.query('SELECT NOW()');
+    res.json({ status: 'OK', database: 'Connected' });
+  } catch (err) {
+    res.status(500).json({ status: 'Error', database: 'Disconnected', error: err.message });
+  }
+});
 
 // --- MIDDLEWARE ---
 const authenticateToken = (req, res, next) => {
