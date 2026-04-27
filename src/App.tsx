@@ -10,7 +10,8 @@ import AuthModal from './components/AuthModal';
 import MyArt from './components/MyArt';
 import ArtMarket from './components/ArtMarket';
 import ArtDetail from './components/ArtDetail';
-import { useState } from 'react';
+import News from './components/News';
+import { useState, useEffect } from 'react';
 
 function App() {
   const [showContact, setShowContact] = useState(false);
@@ -19,61 +20,88 @@ function App() {
   const [user, setUser] = useState<any>(null);
   const [cursorStatus, setCursorStatus] = useState<'default' | 'success' | 'error' | 'loading'>('default');
   const [currentView, setCurrentView] = useState<'home' | 'my-art' | 'market' | 'gallery' | 'art-detail'>('home');
+  const [previousView, setPreviousView] = useState<'home' | 'my-art' | 'market' | 'gallery'>('home');
   const [selectedArtId, setSelectedArtId] = useState<string | null>(null);
 
   // Check for existing session
-  useState(() => {
+  useEffect(() => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
-    
+
     if (token && userData) {
       setIsLoggedIn(true);
       setUser(JSON.parse(userData));
     }
-  });
+  }, []);
 
   const handleViewArt = (id: string) => {
+    setPreviousView(currentView as any);
     setSelectedArtId(id);
     setCurrentView('art-detail');
   };
+
+  useEffect(() => {
+    const titles: Record<string, string> = {
+      home: 'Prisma | Home',
+      'my-art': 'Prisma | Mis Obras',
+      market: 'Prisma | Mercado de Arte',
+      gallery: 'Prisma | Galería'
+    };
+    if (titles[currentView]) {
+      document.title = titles[currentView];
+    }
+  }, []);
+
+  useEffect(() => {
+    const titles: Record<string, string> = {
+      home: 'Prisma | Home',
+      'my-art': 'Prisma | Mis Obras',
+      market: 'Prisma | Mercado de Arte',
+      gallery: 'Prisma | Galería'
+    };
+    if (titles[currentView]) {
+      document.title = titles[currentView];
+    }
+  }, [currentView]);
 
   const renderContent = () => {
     switch (currentView) {
       case 'home':
         return (
           <>
-            <Hero />
+            <Hero onExplore={() => setCurrentView('market')} onPublish={() => setCurrentView('my-art')} />
             <ArtGallery onArtClick={handleViewArt} />
+            <News />
             <ArtistInvite />
             <About />
             <Features />
           </>
         );
       case 'market':
-        return <ArtMarket />;
+        return <ArtMarket onArtClick={handleViewArt} />;
       case 'gallery':
         return <ArtGallery onArtClick={handleViewArt} />;
       case 'art-detail':
         return selectedArtId ? (
-          <ArtDetail 
-            artId={selectedArtId} 
-            onBack={() => setCurrentView(isLoggedIn && currentView === 'art-detail' ? 'gallery' : 'home')} 
+          <ArtDetail
+            artId={selectedArtId}
+            onBack={() => setCurrentView(previousView)}
           />
-        ) : <Hero />;
+        ) : <Hero onExplore={() => setCurrentView('market')} onPublish={() => setCurrentView('my-art')} />;
       case 'my-art':
         return isLoggedIn ? (
-          <MyArt 
-            user={user} 
+          <MyArt
+            user={user}
             onArtClick={handleViewArt}
             onUpdateUser={(updatedUser: any) => {
               setUser(updatedUser);
               const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
               storage.setItem('user', JSON.stringify(updatedUser));
-            }} 
+            }}
           />
         ) : (
           <>
-            <Hero />
+            <Hero onExplore={() => setCurrentView('market')} onPublish={() => setCurrentView('my-art')} />
             <ArtGallery onArtClick={handleViewArt} />
             <ArtistInvite />
             <About />
@@ -81,7 +109,7 @@ function App() {
           </>
         );
       default:
-        return <Hero />;
+        return <Hero onExplore={() => setCurrentView('market')} onPublish={() => setCurrentView('my-art')} />;
     }
   };
 
@@ -97,7 +125,7 @@ function App() {
         currentView={currentView as any}
       />
       <ContactModal isOpen={showContact} onClose={() => setShowContact(false)} />
-      
+
       <AuthModal
         isOpen={showAuth}
         onClose={() => setShowAuth(false)}

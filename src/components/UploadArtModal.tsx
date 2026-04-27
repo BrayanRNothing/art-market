@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Upload, Camera, Tag, DollarSign, FileText, CheckCircle2, Loader2, Image as ImageIcon } from 'lucide-react';
+import { X, Upload, Camera, Tag, DollarSign, FileText, CheckCircle2, Loader2, Image as ImageIcon, Settings, Maximize, Layers } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 interface UploadArtModalProps {
@@ -8,6 +8,8 @@ interface UploadArtModalProps {
   onUploadSuccess: (artwork: any) => void;
   editingArt?: any;
 }
+
+import API_URL from '../config';
 
 const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: UploadArtModalProps) => {
   const [loading, setLoading] = useState(false);
@@ -18,8 +20,11 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
     title: '',
     description: '',
     price: '',
+    currency: 'USD',
     category: 'Digital',
-    status: 'venta'
+    status: 'sale',
+    dimensions: '',
+    technique: ''
   });
 
   const isEditing = !!editingArt;
@@ -29,14 +34,17 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
       setFormData({
         title: editingArt.title || '',
         description: editingArt.description || '',
-        price: editingArt.price?.toString().replace(' ETH', '') || '',
+        price: editingArt.price?.toString().replace(/[^\d.]/g, '') || '',
+        currency: editingArt.currency || 'USD',
         category: editingArt.category || 'Digital',
-        status: editingArt.status || 'venta'
+        status: editingArt.status || 'sale',
+        dimensions: editingArt.dimensions || '',
+        technique: editingArt.technique || ''
       });
       
       const fetchExtraImages = async () => {
         try {
-          const response = await fetch(`http://localhost:5001/api/art/${editingArt.id}`);
+          const response = await fetch(`${API_URL}/api/art/${editingArt.id}`);
           if (response.ok) {
             const data = await response.json();
             const allImages = [data.main_image_url, ...(data.extra_images?.map((img: any) => img.image_url) || [])];
@@ -56,8 +64,11 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
         title: '',
         description: '',
         price: '',
+        currency: 'USD',
         category: 'Digital',
-        status: 'venta'
+        status: 'venta',
+        dimensions: '',
+        technique: ''
       });
       setPreviews([]);
     }
@@ -122,8 +133,8 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
       // 2. Save to database
       const token = localStorage.getItem('token');
       const url = isEditing 
-        ? `http://localhost:5001/api/art/${editingArt.id}`
-        : 'http://localhost:5001/api/art';
+        ? `${API_URL}/api/art/${editingArt.id}`
+        : `${API_URL}/api/art`;
       
       const apiResponse = await fetch(url, {
         method: isEditing ? 'PUT' : 'POST',
@@ -134,11 +145,14 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
-          price: parseFloat(formData.price) || 0,
+          price: formData.price === '' ? null : parseFloat(formData.price),
           status: formData.status,
           category: formData.category,
           main_image_url: mainImageUrl,
-          extra_images: extraImages
+          extra_images: extraImages,
+          currency: formData.currency,
+          dimensions: formData.dimensions,
+          technique: formData.technique
         })
       });
 
@@ -149,11 +163,14 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
       const resultArt = {
         id: savedArt.id,
         title: savedArt.title,
-        price: `${savedArt.price} ETH`,
+        price: savedArt.price ? `${savedArt.currency} ${savedArt.price}` : 'Consultar',
         status: savedArt.status,
         image: savedArt.main_image_url,
         description: savedArt.description,
-        category: savedArt.category
+        category: savedArt.category,
+        currency: savedArt.currency,
+        dimensions: savedArt.dimensions,
+        technique: savedArt.technique
       };
 
       setLoading(false);
@@ -177,8 +194,11 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
       title: '',
       description: '',
       price: '',
+      currency: 'USD',
       category: 'Digital',
-      status: 'venta'
+      status: 'sale',
+      dimensions: '',
+      technique: ''
     });
     onClose();
   };
@@ -223,8 +243,10 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
               <AnimatePresence mode="wait">
                 {success ? (
                   <motion.div
+                    key="success"
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
                     className="flex-1 flex flex-col items-center justify-center text-center space-y-6"
                   >
                     <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary border border-primary/20">
@@ -240,7 +262,7 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
                     </div>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-8">
+                  <form key="form" onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-8">
                     {/* Image Upload Area */}
                     <div className="space-y-4">
                       <div 
@@ -335,56 +357,135 @@ const UploadArtModal = ({ isOpen, onClose, onUploadSuccess, editingArt }: Upload
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-6">
-                        {/* Price */}
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-[0.2em] text-primary/40 font-bold flex items-center gap-2">
-                            <DollarSign size={12} /> Precio (ETH)
-                          </label>
-                          <input
-                            type="number"
-                            step="0.01"
-                            placeholder="0.00"
-                            className="w-full bg-transparent border-b border-white/10 py-3 text-primary outline-none focus:border-primary transition-colors font-bold text-lg placeholder:text-white/5"
-                            value={formData.price}
-                            onChange={(e) => setFormData({...formData, price: e.target.value})}
-                          />
-                        </div>
-
-                        {/* Category */}
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-[0.2em] text-primary/40 font-bold flex items-center gap-2">
-                            <ImageIcon size={12} /> Categoría
-                          </label>
-                          <select
-                            className="w-full bg-transparent border-b border-white/10 py-3 text-primary outline-none focus:border-primary transition-colors text-sm appearance-none"
-                            value={formData.category}
-                            onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      {/* Segmented Control (Venta vs Exhibición) */}
+                      <div className="space-y-3">
+                        <label className="text-[10px] uppercase tracking-[0.2em] text-primary/40 font-bold flex items-center gap-2">
+                          <Settings size={12} /> Propósito de la Obra
+                        </label>
+                        <div className="grid grid-cols-2 p-1 bg-white/[0.03] border border-white/5 rounded-xl relative overflow-hidden">
+                          <button
+                            type="button"
+                            onClick={() => setFormData({...formData, status: 'sale'})}
+                            className={`relative z-10 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-lg ${formData.status === 'sale' ? 'text-black' : 'text-primary/40 hover:text-primary/70'}`}
                           >
-                            <option value="Digital" className="bg-[#0a0a0a]">Digital</option>
-                            <option value="Oleo" className="bg-[#0a0a0a]">Óleo</option>
-                            <option value="Escultura" className="bg-[#0a0a0a]">Escultura</option>
-                            <option value="Fotografia" className="bg-[#0a0a0a]">Fotografía</option>
-                          </select>
+                            Venta
+                            {formData.status === 'sale' && (
+                              <motion.div
+                                layoutId="status-bg"
+                                className="absolute inset-0 bg-primary rounded-lg -z-10"
+                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                              />
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFormData({...formData, status: 'exhibition'})}
+                            className={`relative z-10 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-lg ${formData.status === 'exhibition' ? 'text-black' : 'text-primary/40 hover:text-primary/70'}`}
+                          >
+                            Exhibición
+                            {formData.status === 'exhibition' && (
+                              <motion.div
+                                layoutId="status-bg"
+                                className="absolute inset-0 bg-primary rounded-lg -z-10"
+                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                              />
+                            )}
+                          </button>
                         </div>
                       </div>
 
-                      {/* Status Toggle */}
-                      <div className="flex items-center justify-between p-4 bg-white/[0.02] rounded-xl border border-white/10">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary">Estado de Venta</span>
-                          <span className="text-[9px] text-primary/40 uppercase mt-1">¿Deseas poner esta obra a la venta?</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setFormData({...formData, status: formData.status === 'venta' ? 'exhibicion' : 'venta'})}
-                          className={`w-12 h-6 rounded-full transition-all relative flex items-center px-1 ${formData.status === 'venta' ? 'bg-primary' : 'bg-white/10'}`}
-                        >
+                      <AnimatePresence mode="wait">
+                        {formData.status === 'sale' && (
                           <motion.div 
-                            animate={{ x: formData.status === 'venta' ? 24 : 0 }}
-                            className={`w-4 h-4 rounded-full ${formData.status === 'venta' ? 'bg-black' : 'bg-primary/20'}`}
+                            key="price-section"
+                            initial={{ opacity: 0, height: 0, y: -20 }}
+                            animate={{ opacity: 1, height: 'auto', y: 0 }}
+                            exit={{ opacity: 0, height: 0, y: -20 }}
+                            transition={{ duration: 0.3, ease: 'easeOut' }}
+                            className="overflow-hidden"
+                          >
+                            <div className="grid grid-cols-2 gap-4 pb-2">
+                              {/* Price */}
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-[0.2em] text-primary/40 font-bold flex items-center gap-2">
+                                  <DollarSign size={12} /> Precio
+                                </label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="Sin precio (Consultar)"
+                                  className="w-full bg-transparent border-b border-white/10 py-3 text-primary outline-none focus:border-primary transition-colors font-bold text-lg placeholder:text-white/5"
+                                  value={formData.price}
+                                  onChange={(e) => setFormData({...formData, price: e.target.value})}
+                                />
+                              </div>
+
+                              {/* Currency */}
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-[0.2em] text-primary/40 font-bold flex items-center gap-2">
+                                  Moneda
+                                </label>
+                                <select
+                                  className="w-full bg-transparent border-b border-white/10 py-3 text-primary outline-none focus:border-primary transition-colors text-sm appearance-none"
+                                  value={formData.currency}
+                                  onChange={(e) => setFormData({...formData, currency: e.target.value})}
+                                >
+                                  <option value="USD" className="bg-[#0a0a0a]">USD ($)</option>
+                                  <option value="MXN" className="bg-[#0a0a0a]">MXN ($)</option>
+                                  <option value="COP" className="bg-[#0a0a0a]">COP ($)</option>
+                                  <option value="EUR" className="bg-[#0a0a0a]">EUR (€)</option>
+                                  <option value="BTC" className="bg-[#0a0a0a]">BTC (₿)</option>
+                                  <option value="ETH" className="bg-[#0a0a0a]">ETH (Ξ)</option>
+                                </select>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Category */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-[0.2em] text-primary/40 font-bold flex items-center gap-2">
+                          <ImageIcon size={12} /> Categoría
+                        </label>
+                        <select
+                          className={`w-full bg-transparent border-b border-white/10 py-3 text-primary outline-none focus:border-primary transition-colors text-sm appearance-none ${formData.status === 'exhibicion' ? 'mt-4' : ''}`}
+                          value={formData.category}
+                          onChange={(e) => setFormData({...formData, category: e.target.value})}
+                        >
+                          <option value="Digital" className="bg-[#0a0a0a]">Digital</option>
+                          <option value="Oleo" className="bg-[#0a0a0a]">Óleo</option>
+                          <option value="Escultura" className="bg-[#0a0a0a]">Escultura</option>
+                          <option value="Fotografia" className="bg-[#0a0a0a]">Fotografía</option>
+                        </select>
+                      </div>
+
+                      {/* Dimensions & Technique */}
+                      <div className="grid grid-cols-2 gap-4 pt-2">
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-[0.2em] text-primary/40 font-bold flex items-center gap-2">
+                            <Maximize size={12} /> Dimensiones
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Ej: 100 x 120 cm"
+                            className="w-full bg-transparent border-b border-white/10 py-3 text-primary outline-none focus:border-primary transition-colors text-sm placeholder:text-white/5"
+                            value={formData.dimensions}
+                            onChange={(e) => setFormData({...formData, dimensions: e.target.value})}
                           />
-                        </button>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-[0.2em] text-primary/40 font-bold flex items-center gap-2">
+                            <Layers size={12} /> Técnica
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Ej: Óleo sobre lienzo"
+                            className="w-full bg-transparent border-b border-white/10 py-3 text-primary outline-none focus:border-primary transition-colors text-sm placeholder:text-white/5"
+                            value={formData.technique}
+                            onChange={(e) => setFormData({...formData, technique: e.target.value})}
+                          />
+                        </div>
                       </div>
                     </div>
 

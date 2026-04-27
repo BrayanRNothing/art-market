@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import WordsPullUp from './WordsPullUp';
 
-const Hero = () => {
+const Hero = ({ onExplore, onPublish }: { onExplore: () => void, onPublish: () => void }) => {
   return (
     <section className="h-screen w-full p-4 md:p-6 overflow-hidden bg-black">
       <div className="relative w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden">
@@ -49,6 +49,7 @@ const Hero = () => {
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
                   className="group flex items-center gap-2 bg-primary text-black rounded-full px-1 py-1 pr-1 pl-6 w-fit transition-all duration-300 hover:gap-3"
+                  onClick={onExplore}
                 >
                   <span className="font-medium text-sm sm:text-base whitespace-nowrap">Explora el arte</span>
                   <div className="bg-black rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
@@ -61,6 +62,7 @@ const Hero = () => {
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
                   className="group flex items-center gap-2 bg-primary text-black rounded-full px-1 py-1 pr-1 pl-6 w-fit transition-all duration-300 hover:gap-3"
+                  onClick={onPublish}
                 >
                   <span className="font-medium text-sm sm:text-base whitespace-nowrap">Publica tu arte</span>
                   <div className="bg-black rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">

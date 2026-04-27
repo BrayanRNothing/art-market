@@ -114,7 +114,7 @@ export function RevealParagraph({ text, className }: RevealParagraphProps) {
   const letters = Array.from(text)
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={`relative ${className}`}>
       <p className="flex flex-wrap justify-center leading-[1.15]">
         {letters.map((letter, index) => (
           <AnimatedLetter key={`${letter}-${index}`} letter={letter} index={index} total={letters.length} progress={scrollYProgress} />

@@ -97,7 +97,13 @@ app.post('/api/auth/login', async (req, res) => {
         full_name: artist.rows[0].full_name,
         bio: artist.rows[0].bio,
         avatar_url: artist.rows[0].avatar_url,
-        email: artist.rows[0].email
+        email: artist.rows[0].email,
+        whatsapp: artist.rows[0].whatsapp,
+        instagram: artist.rows[0].instagram,
+        twitter: artist.rows[0].twitter,
+        facebook: artist.rows[0].facebook,
+        tiktok: artist.rows[0].tiktok,
+        personal_web: artist.rows[0].personal_web
       }
     });
   } catch (err) {
@@ -108,16 +114,16 @@ app.post('/api/auth/login', async (req, res) => {
 
 // Update Profile
 app.put('/api/auth/profile', authenticateToken, async (req, res) => {
-  const { full_name, bio, whatsapp, instagram, twitter, personal_web, avatar_url } = req.body;
+  const { full_name, bio, whatsapp, instagram, twitter, facebook, tiktok, personal_web, avatar_url } = req.body;
   const artist_id = req.user.id;
 
   try {
     const updatedArtist = await pool.query(
       `UPDATE artists 
-       SET full_name = $1, bio = $2, whatsapp = $3, instagram = $4, twitter = $5, personal_web = $6, avatar_url = $7
-       WHERE id = $8 
-       RETURNING id, username, full_name, bio, avatar_url, email, whatsapp, instagram, twitter, personal_web`,
-      [full_name, bio, whatsapp, instagram, twitter, personal_web, avatar_url, artist_id]
+       SET full_name = $1, bio = $2, whatsapp = $3, instagram = $4, twitter = $5, facebook = $6, tiktok = $7, personal_web = $8, avatar_url = $9
+       WHERE id = $10 
+       RETURNING id, username, full_name, bio, avatar_url, email, whatsapp, instagram, twitter, facebook, tiktok, personal_web`,
+      [full_name, bio, whatsapp, instagram, twitter, facebook, tiktok, personal_web, avatar_url, artist_id]
     );
 
     if (updatedArtist.rows.length === 0) {
@@ -135,7 +141,7 @@ app.put('/api/auth/profile', authenticateToken, async (req, res) => {
 
 // Create Art Piece
 app.post('/api/art', authenticateToken, async (req, res) => {
-  const { title, description, price, status, category, main_image_url, extra_images } = req.body;
+  const { title, description, price, status, category, main_image_url, extra_images, currency, dimensions, technique } = req.body;
   const artist_id = req.user.id;
 
   const client = await pool.connect();
@@ -143,8 +149,8 @@ app.post('/api/art', authenticateToken, async (req, res) => {
     await client.query('BEGIN');
     
     const newArt = await client.query(
-      'INSERT INTO art_pieces (artist_id, title, description, price, status, category, main_image_url) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [artist_id, title, description, price, status, category, main_image_url]
+      'INSERT INTO art_pieces (artist_id, title, description, price, status, category, main_image_url, currency, dimensions, technique) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+      [artist_id, title, description, price, status, category, main_image_url, currency, dimensions, technique]
     );
     
     const art_id = newArt.rows[0].id;
@@ -187,7 +193,7 @@ app.get('/api/art/my', authenticateToken, async (req, res) => {
 
 // Update Art Piece
 app.put('/api/art/:id', authenticateToken, async (req, res) => {
-  const { title, description, price, status, category, main_image_url, extra_images } = req.body;
+  const { title, description, price, status, category, main_image_url, extra_images, currency, dimensions, technique } = req.body;
   const art_id = req.params.id;
   const artist_id = req.user.id;
 
@@ -204,10 +210,10 @@ app.put('/api/art/:id', authenticateToken, async (req, res) => {
 
     const updatedArt = await client.query(
       `UPDATE art_pieces 
-       SET title = $1, description = $2, price = $3, status = $4, category = $5, main_image_url = $6
-       WHERE id = $7 AND artist_id = $8
+       SET title = $1, description = $2, price = $3, status = $4, category = $5, main_image_url = $6, currency = $7, dimensions = $8, technique = $9
+       WHERE id = $10 AND artist_id = $11
        RETURNING *`,
-      [title, description, price, status, category, main_image_url || artCheck.rows[0].main_image_url, art_id, artist_id]
+      [title, description, price, status, category, main_image_url || artCheck.rows[0].main_image_url, currency, dimensions, technique, art_id, artist_id]
     );
 
     if (extra_images && Array.isArray(extra_images)) {
@@ -259,7 +265,8 @@ app.get('/api/art/:id', async (req, res) => {
 
   try {
     const artResult = await pool.query(
-      `SELECT ap.*, a.full_name as artist_name, a.avatar_url as artist_avatar, a.bio as artist_bio, a.instagram, a.whatsapp
+      `SELECT ap.*, a.full_name as artist_name, a.avatar_url as artist_avatar, a.bio as artist_bio, 
+              a.instagram, a.whatsapp, a.facebook, a.twitter, a.tiktok, a.personal_web
        FROM art_pieces ap
        JOIN artists a ON ap.artist_id = a.id
        WHERE ap.id = $1`,

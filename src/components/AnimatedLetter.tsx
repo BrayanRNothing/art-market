@@ -32,7 +32,7 @@ const AnimatedLetter = ({ text, className }: AnimatedLetterProps) => {
   const totalChars = letters.length;
 
   return (
-    <p ref={ref} className={`flex flex-wrap ${className}`}>
+    <p ref={ref} className={`relative flex flex-wrap ${className}`}>
       {letters.map((char, i) => {
         const charProgress = i / totalChars;
         const start = charProgress - 0.1;

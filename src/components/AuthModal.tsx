@@ -3,6 +3,8 @@ import { X, User, Lock, LogOut, ArrowRight, Loader2, CheckCircle2 } from 'lucide
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+import API_URL_BASE from '../config';
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -12,7 +14,7 @@ interface AuthModalProps {
   onError: () => void;
 }
 
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = `${API_URL_BASE}/api/auth`;
 
 const AuthModal = ({ isOpen, onClose, isLoggedIn, onLogin, onLogout, onError }: AuthModalProps) => {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { ShoppingCart, User } from 'lucide-react';
+import { Contact, User } from 'lucide-react';
 
 const Navbar = ({ onContactClick, onProfileClick, onViewChange, isLoggedIn, user, currentView }: {
   onContactClick: () => void,
@@ -16,8 +16,7 @@ const Navbar = ({ onContactClick, onProfileClick, onViewChange, isLoggedIn, user
     { label: "Home", view: 'home' },
     { label: "Art Market", view: 'market' },
     { label: "Art Gallery", view: 'gallery' },
-    ...(isLoggedIn ? [{ label: "My Art", view: 'my-art' }] : []),
-    { label: "Contact", view: null }
+    ...(isLoggedIn ? [{ label: "My Art", view: 'my-art' }] : [])
   ];
 
   return (
@@ -41,18 +40,16 @@ const Navbar = ({ onContactClick, onProfileClick, onViewChange, isLoggedIn, user
               key={item.label}
               layout
               initial={{ opacity: 0, scale: 0.8, x: item.label === "My Art" ? -10 : 0 }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1, 
+              animate={{
+                opacity: 1,
+                scale: 1,
                 x: 0,
                 color: (item.view === currentView && item.label !== "Contact") ? '#e1e0cc' : 'rgba(225, 224, 204, 0.6)'
               }}
               exit={{ opacity: 0, scale: 0.8 }}
               whileHover={{ scale: 1.05 }}
               onClick={() => {
-                if (item.label === "Contact") {
-                  onContactClick();
-                } else if (item.label === "My Art") {
+                if (item.label === "My Art") {
                   if (isLoggedIn) {
                     onViewChange('my-art');
                   } else {
@@ -65,7 +62,7 @@ const Navbar = ({ onContactClick, onProfileClick, onViewChange, isLoggedIn, user
               className={`relative text-[10px] sm:text-xs md:text-[13px] font-medium tracking-wide transition-colors duration-300 uppercase`}
             >
               {item.label === "My Art" && isLoggedIn && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: [0, 1, 0], scale: [0.5, 2, 0] }}
                   transition={{ duration: 1.5, ease: "easeOut" }}
@@ -73,7 +70,7 @@ const Navbar = ({ onContactClick, onProfileClick, onViewChange, isLoggedIn, user
                 />
               )}
               {item.label}
-              {item.view === currentView && item.label !== "Contact" && (
+              {item.view === currentView && (
                 <motion.div layoutId="nav-underline" className="h-px bg-primary mt-0.5" />
               )}
             </motion.button>
@@ -84,10 +81,11 @@ const Navbar = ({ onContactClick, onProfileClick, onViewChange, isLoggedIn, user
       {/* Floating Action Buttons */}
       <div className="absolute top-4 right-10 h-12 md:h-16 flex items-center gap-3 pointer-events-none">
         <button
-          title="Carrito"
+          onClick={onContactClick}
+          title="Contacto"
           className="w-8 h-8 bg-black border border-white/10 rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-black transition-all pointer-events-auto shadow-xl"
         >
-          <ShoppingCart size={14} />
+          <Contact size={14} />
         </button>
         <button
           onClick={onProfileClick}

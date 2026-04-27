@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Edit2, Share2, Grid, Heart, MessageSquare, Settings, User, Palette, Check, X, Loader2, Trash2, Eye } from 'lucide-react';
+import { Camera, Edit2, Share2, Grid, Heart, MessageSquare, Settings, User, Palette, Check, X, Loader2, Trash2, Eye, Instagram, Facebook, Twitter } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import UploadArtModal from './UploadArtModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
+
+import API_URL from '../config';
 
 const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u: any) => void, onArtClick: (id: string) => void }) => {
   const [activeTab, setActiveTab] = useState('Vista General');
@@ -12,7 +14,13 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
   const [editData, setEditData] = useState({
     full_name: user?.full_name || '',
     bio: user?.bio || '',
-    avatar_url: user?.avatar_url || ''
+    avatar_url: user?.avatar_url || '',
+    whatsapp: user?.whatsapp || '',
+    instagram: user?.instagram || '',
+    twitter: user?.twitter || '',
+    facebook: user?.facebook || '',
+    tiktok: user?.tiktok || '',
+    personal_web: user?.personal_web || ''
   });
   const [isUploadingProfile, setIsUploadingProfile] = useState(false);
 
@@ -27,7 +35,7 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
     const fetchArt = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5001/api/art/my', {
+        const response = await fetch(`${API_URL}/api/art/my`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -38,7 +46,7 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
           const adaptedArt = data.map((art: any) => ({
             id: art.id,
             title: art.title,
-            price: `${art.price} ETH`,
+            price: art.price ? `${art.currency || '$'} ${art.price}` : 'Consultar',
             status: art.status,
             image: art.main_image_url
           }));
@@ -79,11 +87,11 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
 
   const confirmDeleteArt = async () => {
     if (!artToDelete) return;
-    
+
     setIsDeletingArt(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5001/api/art/${artToDelete.id}`, {
+      const response = await fetch(`${API_URL}/api/art/${artToDelete.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -109,7 +117,7 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
     setIsSaving(true);
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/auth/profile', {
+      const response = await fetch(`${API_URL}/api/auth/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -165,15 +173,15 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
 
   const filteredArtworks = artworks.filter(art => {
     if (activeTab === 'Vista General') return true;
-    if (activeTab === 'En Venta') return art.status === 'venta';
-    if (activeTab === 'Exhibición') return art.status === 'exhibicion';
+    if (activeTab === 'En Venta') return art.status === 'sale';
+    if (activeTab === 'Exhibición') return art.status === 'exhibition';
     return true;
   });
 
   const tabs = ['Vista General', 'En Venta', 'Exhibición'];
 
   return (
-    <div className="min-h-screen bg-black p-4 md:p-6">
+    <div className="min-h-screen bg-black p-4 md:p-6 relative">
       <div className="relative w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden bg-[#080808]">
 
         {/* Banner Section */}
@@ -198,9 +206,9 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
                 className="w-40 h-40 md:w-48 md:h-48 rounded-full border-[6px] border-[#080808] overflow-hidden bg-[#222] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center justify-center relative"
               >
                 {editData.avatar_url || user?.avatar_url ? (
-                  <img 
-                    src={isEditing ? editData.avatar_url : (user?.avatar_url || editData.avatar_url)} 
-                    alt="Profile" 
+                  <img
+                    src={isEditing ? editData.avatar_url : (user?.avatar_url || editData.avatar_url)}
+                    alt="Profile"
                     className={`w-full h-full object-cover ${isUploadingProfile ? 'opacity-30' : 'opacity-100'} transition-opacity`}
                   />
                 ) : (
@@ -214,7 +222,7 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
               </motion.div>
               {isEditing && (
                 <>
-                  <button 
+                  <button
                     onClick={() => profileInputRef.current?.click()}
                     disabled={isUploadingProfile}
                     className="absolute bottom-2 right-2 p-3 bg-primary text-black rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:scale-110 transition-all z-50 border-4 border-[#080808]"
@@ -226,7 +234,7 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
                     )}
                   </button>
                   {(editData.avatar_url || user?.avatar_url) && (
-                    <button 
+                    <button
                       onClick={() => setEditData({ ...editData, avatar_url: '' })}
                       className="absolute bottom-2 left-2 p-3 bg-red-500 text-white rounded-full shadow-[0_10px_30px_rgba(239,68,68,0.3)] hover:scale-110 transition-all z-50 border-4 border-[#080808]"
                       title="Eliminar foto de perfil"
@@ -236,10 +244,10 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
                   )}
                 </>
               )}
-              <input 
-                type="file" 
-                ref={profileInputRef} 
-                className="hidden" 
+              <input
+                type="file"
+                ref={profileInputRef}
+                className="hidden"
                 accept="image/*"
                 onChange={handleProfilePictureChange}
               />
@@ -276,16 +284,116 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
                   transition={{ delay: 0.4 }}
                 >
                   {isEditing ? (
-                    <textarea
-                      value={editData.bio}
-                      onChange={(e) => setEditData({ ...editData, bio: e.target.value })}
-                      placeholder="Escribe aquí una breve descripción de tu estilo o tu biografía artística..."
-                      className="text-primary/60 max-w-xl text-sm md:text-base leading-relaxed font-light italic bg-transparent border-none p-0 w-full outline-none focus:ring-0 min-h-[60px] resize-none transition-all placeholder:text-primary/10 m-0 transform translate-y-[4px]"
-                    />
+                    <div className="space-y-4 w-full max-w-2xl mt-4">
+                      <textarea
+                        value={editData.bio}
+                        onChange={(e) => setEditData({ ...editData, bio: e.target.value })}
+                        placeholder="Escribe aquí una breve descripción de tu estilo o tu biografía artística..."
+                        className="text-primary/60 text-sm md:text-base leading-relaxed font-light italic bg-white/5 border border-white/10 rounded-xl p-4 w-full outline-none focus:ring-1 focus:ring-primary/30 min-h-[100px] resize-none transition-all placeholder:text-primary/10"
+                      />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+                          <Instagram size={16} className="text-primary/40" />
+                          <input
+                            type="text"
+                            value={editData.instagram}
+                            onChange={(e) => setEditData({ ...editData, instagram: e.target.value })}
+                            placeholder="Instagram (ej: @usuario)"
+                            className="bg-transparent border-none outline-none text-sm text-primary/80 placeholder:text-primary/10 w-full p-0"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+                          <Facebook size={16} className="text-primary/40" />
+                          <input
+                            type="text"
+                            value={editData.facebook}
+                            onChange={(e) => setEditData({ ...editData, facebook: e.target.value })}
+                            placeholder="Facebook URL"
+                            className="bg-transparent border-none outline-none text-sm text-primary/80 placeholder:text-primary/10 w-full p-0"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+                          <MessageSquare size={16} className="text-primary/40" />
+                          <input
+                            type="text"
+                            value={editData.whatsapp}
+                            onChange={(e) => setEditData({ ...editData, whatsapp: e.target.value })}
+                            placeholder="WhatsApp (ej: +54...)"
+                            className="bg-transparent border-none outline-none text-sm text-primary/80 placeholder:text-primary/10 w-full p-0"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+                          <Twitter size={16} className="text-primary/40" />
+                          <input
+                            type="text"
+                            value={editData.twitter}
+                            onChange={(e) => setEditData({ ...editData, twitter: e.target.value })}
+                            placeholder="Twitter/X (ej: @usuario)"
+                            className="bg-transparent border-none outline-none text-sm text-primary/80 placeholder:text-primary/10 w-full p-0"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+                          <Palette size={16} className="text-primary/40" />
+                          <input
+                            type="text"
+                            value={editData.tiktok}
+                            onChange={(e) => setEditData({ ...editData, tiktok: e.target.value })}
+                            placeholder="TikTok (ej: @usuario)"
+                            className="bg-transparent border-none outline-none text-sm text-primary/80 placeholder:text-primary/10 w-full p-0"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2">
+                          <Eye size={16} className="text-primary/40" />
+                          <input
+                            type="text"
+                            value={editData.personal_web}
+                            onChange={(e) => setEditData({ ...editData, personal_web: e.target.value })}
+                            placeholder="Sitio Web Personal"
+                            className="bg-transparent border-none outline-none text-sm text-primary/80 placeholder:text-primary/10 w-full p-0"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   ) : (
-                    <p className="text-primary/40 max-w-xl text-sm md:text-base leading-relaxed font-light italic m-0">
-                      {user?.bio || "Escribe aquí una breve descripción de tu estilo o tu biografía artística..."}
-                    </p>
+                    <div className="space-y-6">
+                      <div className="flex flex-wrap gap-4 pt-2">
+                        {user?.instagram && (
+                          <a href={`https://instagram.com/${user.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary/40 hover:text-primary transition-colors text-xs font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                            <Instagram size={14} /> {user.instagram.startsWith('@') ? user.instagram : `@${user.instagram}`}
+                          </a>
+                        )}
+                        {user?.facebook && (
+                          <a href={user.facebook.startsWith('http') ? user.facebook : `https://facebook.com/${user.facebook}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary/40 hover:text-primary transition-colors text-xs font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                            <Facebook size={14} /> FACEBOOK
+                          </a>
+                        )}
+                        {user?.whatsapp && (
+                          <a href={`https://wa.me/${user.whatsapp.replace('+', '').replace(' ', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary/40 hover:text-primary transition-colors text-xs font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                            <MessageSquare size={14} /> WHATSAPP
+                          </a>
+                        )}
+                        {user?.twitter && (
+                          <a href={`https://twitter.com/${user.twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary/40 hover:text-primary transition-colors text-xs font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                            <Twitter size={14} /> {user.twitter.startsWith('@') ? user.twitter : `@${user.twitter}`}
+                          </a>
+                        )}
+                        {user?.tiktok && (
+                          <a href={`https://tiktok.com/@${user.tiktok.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary/40 hover:text-primary transition-colors text-xs font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                            <Share2 size={14} /> TIKTOK
+                          </a>
+                        )}
+                        {user?.personal_web && (
+                          <a href={user.personal_web.startsWith('http') ? user.personal_web : `https://${user.personal_web}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary/40 hover:text-primary transition-colors text-xs font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                            <Eye size={14} /> WEB
+                          </a>
+                        )}
+                      </div>
+
+                      <p className="text-primary/40 max-w-xl text-sm md:text-base leading-relaxed font-light italic m-0 border-l-2 border-primary/10 pl-6">
+                        {user?.bio || "Escribe aquí una breve descripción de tu estilo o tu biografía artística..."}
+                      </p>
+                    </div>
                   )}
                 </motion.div>
               </div>
@@ -325,7 +433,13 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
                         setEditData({
                           full_name: user?.full_name || '',
                           bio: user?.bio || '',
-                          avatar_url: user?.avatar_url || ''
+                          avatar_url: user?.avatar_url || '',
+                          whatsapp: user?.whatsapp || '',
+                          instagram: user?.instagram || '',
+                          twitter: user?.twitter || '',
+                          facebook: user?.facebook || '',
+                          tiktok: user?.tiktok || '',
+                          personal_web: user?.personal_web || ''
                         });
                       }}
                       className="p-3 bg-white/5 border border-white/10 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all backdrop-blur-md"
@@ -334,14 +448,14 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
                     </button>
                   </div>
                 ) : (
-                  <button 
+                  <button
                     onClick={() => setIsEditing(true)}
                     className="p-3 bg-white/5 border border-white/10 rounded-full text-primary/80 hover:text-primary hover:bg-white/10 transition-all backdrop-blur-md"
                   >
                     <Settings size={18} />
                   </button>
                 )}
-                
+
                 {!isEditing && (
                   <button className="p-3 bg-white/5 border border-white/10 rounded-full text-primary/50 hover:text-primary transition-all">
                     <Share2 size={18} />
@@ -379,86 +493,99 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
           </div>
 
           {/* Gallery Grid */}
-          <div className="mt-12 min-h-[400px] flex items-center justify-center">
+          <div className="mt-12 min-h-[400px] relative">
             <AnimatePresence mode="popLayout">
               {filteredArtworks.length > 0 ? (
-                <motion.div 
+                <motion.div
                   layout
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 w-full"
                 >
-                  {filteredArtworks.map((art) => (
+                  {filteredArtworks.map((art, index) => (
                     <motion.div
                       key={art.id}
                       layout
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.3 }}
-                      className="group relative"
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.5, delay: index * 0.05 }}
+                      className="group"
                     >
-                      <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-zinc-900 border border-white/5 relative group cursor-pointer">
+                      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl mb-6 bg-white/[0.02] border border-white/[0.03]">
                         <img
                           src={art.image}
                           alt={art.title}
-                          onClick={() => onArtClick(art.id)}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="w-full h-full object-cover"
                         />
-                        {activeTab === 'Vista General' && (
-                          <div className="absolute top-4 left-4 z-20">
-                            <span className={`px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest backdrop-blur-md border ${art.status === 'venta'
+
+                        {/* Tags */}
+                        <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
+                          {art.status === 'sold' ? (
+                            <div className="bg-red-500/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                              <span className="text-white text-[9px] font-black uppercase tracking-widest">Vendido</span>
+                            </div>
+                          ) : (
+                            <div className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest backdrop-blur-md border ${art.status === 'sale'
                               ? 'bg-primary/20 text-primary border-primary/20'
                               : 'bg-white/10 text-white/50 border-white/10'
                               }`}>
-                              {art.status === 'venta' ? 'En Venta' : 'Exhibición'}
-                            </span>
+                              {art.status === 'sale' ? 'En Venta' : 'Exhibición'}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Hover Overlay Controls */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                          <div className="absolute top-4 right-4 flex flex-col gap-2 transform -translate-y-2 group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto">
+                            <button
+                              onClick={() => onArtClick(art.id)}
+                              className="w-8 h-8 rounded-full bg-primary text-black flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
+                              title="Ver detalles"
+                            >
+                              <Eye size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleEditArt(art)}
+                              className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
+                              title="Editar obra"
+                            >
+                              <Edit2 size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteArt(art)}
+                              className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
+                              title="Eliminar obra"
+                            >
+                              <Trash2 size={14} />
+                            </button>
                           </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px] flex items-center justify-center gap-4">
-                          <button 
-                            onClick={() => onArtClick(art.id)}
-                            className="p-3 bg-primary text-black rounded-full hover:scale-110 transition-transform shadow-xl"
-                            title="Ver detalles"
-                          >
-                            <Eye size={20} />
-                          </button>
-                          <button 
-                            onClick={() => handleEditArt(art)}
-                            className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform shadow-xl"
-                            title="Editar obra"
-                          >
-                            <Edit2 size={20} />
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteArt(art)}
-                            className="p-3 bg-red-500 text-white rounded-full hover:scale-110 transition-transform shadow-xl"
-                            title="Eliminar obra"
-                          >
-                            <Trash2 size={20} />
-                          </button>
                         </div>
                       </div>
-                      <div className="mt-4 flex justify-between items-start">
-                        <div>
-                          <h3 className="text-[#e1e0cc] font-medium text-lg font-serif italic">{art.title}</h3>
-                          <p className="text-primary/40 text-xs uppercase tracking-widest mt-1">
-                            {art.status === 'venta' ? 'Digital Asset' : 'Artistic Display'}
-                          </p>
+
+                      <div className="space-y-2 px-1">
+                        <div className="flex justify-between items-start gap-4">
+                          <h3 className="text-[#e1e0cc] text-xl font-serif italic font-medium truncate flex-1">{art.title}</h3>
+                          <div className="flex flex-col items-end">
+                            <span className="text-primary font-bold text-sm">
+                              {art.status === 'sale' ? art.price : 'Exhibición'}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-primary font-bold">
-                          {art.status === 'venta' ? art.price : 'NFS'}
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-px bg-primary/20" />
+                          <p className="text-primary/30 text-[10px] uppercase tracking-widest font-bold">Publicado por ti</p>
                         </div>
                       </div>
                     </motion.div>
                   ))}
                 </motion.div>
               ) : (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="flex flex-col items-center text-center py-20"
                 >
                   <div className="relative mb-6">
-                    <motion.div 
+                    <motion.div
                       animate={{ opacity: [0.1, 0.2, 0.1] }}
                       transition={{ duration: 4, repeat: Infinity }}
                       className="absolute inset-0 bg-primary rounded-full blur-3xl"

@@ -19,7 +19,9 @@ const initDb = async () => {
         avatar_url TEXT,
         whatsapp VARCHAR(20),
         instagram VARCHAR(100),
+        facebook VARCHAR(100),
         twitter VARCHAR(100),
+        tiktok VARCHAR(100),
         personal_web TEXT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
@@ -36,6 +38,9 @@ const initDb = async () => {
         status VARCHAR(20) DEFAULT 'sale', -- 'sale', 'exhibition', 'sold'
         category VARCHAR(50),
         main_image_url TEXT,
+        currency VARCHAR(10) DEFAULT 'USD',
+        dimensions VARCHAR(100),
+        technique VARCHAR(100),
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
