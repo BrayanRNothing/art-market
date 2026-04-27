@@ -321,6 +321,8 @@ app.get('/api/art', async (req, res) => {
     console.error(err);
     res.status(500).send('Error al obtener las obras');
   }
+});
+
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../dist')));
 
