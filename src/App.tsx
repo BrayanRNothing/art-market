@@ -10,7 +10,6 @@ import AuthModal from './components/AuthModal';
 import MyArt from './components/MyArt';
 import ArtMarket from './components/ArtMarket';
 import ArtDetail from './components/ArtDetail';
-import News from './components/News';
 import { useState, useEffect } from 'react';
 
 function App() {
@@ -71,7 +70,6 @@ function App() {
           <>
             <Hero onExplore={() => setCurrentView('market')} onPublish={() => setCurrentView('my-art')} />
             <ArtGallery onArtClick={handleViewArt} />
-            <News />
             <ArtistInvite />
             <About />
             <Features />
