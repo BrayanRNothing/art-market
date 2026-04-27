@@ -47,16 +47,11 @@ const CustomCursor = ({ status = 'default' }: CustomCursorProps) => {
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
 
-    const style = document.createElement('style');
-    style.innerHTML = `* { cursor: none !important; }`;
-    document.head.appendChild(style);
-
     return () => {
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mouseover', handleHoverStart);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
-      document.head.removeChild(style);
     };
   }, [cursorX, cursorY]);
 
