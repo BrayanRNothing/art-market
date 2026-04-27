@@ -41,10 +41,10 @@ function App() {
 
   useEffect(() => {
     const titles: Record<string, string> = {
-      home: 'Prisma | Home',
-      'my-art': 'Prisma | Mis Obras',
-      market: 'Prisma | Mercado de Arte',
-      gallery: 'Prisma | Galería'
+      home: 'Art Market | Home',
+      'my-art': 'Art Market | Mis Obras',
+      market: 'Art Market | Mercado de Arte',
+      gallery: 'Art Market | Galería'
     };
     if (titles[currentView]) {
       document.title = titles[currentView];
@@ -53,10 +53,10 @@ function App() {
 
   useEffect(() => {
     const titles: Record<string, string> = {
-      home: 'Prisma | Home',
-      'my-art': 'Prisma | Mis Obras',
-      market: 'Prisma | Mercado de Arte',
-      gallery: 'Prisma | Galería'
+      home: 'Art Market | Home',
+      'my-art': 'Art Market | Mis Obras',
+      market: 'Art Market | Mercado de Arte',
+      gallery: 'Art Market | Galería'
     };
     if (titles[currentView]) {
       document.title = titles[currentView];

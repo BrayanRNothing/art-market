@@ -54,7 +54,7 @@ const ArtDetail = ({ artId, onBack }: ArtDetailProps) => {
 
   useEffect(() => {
     if (art) {
-      document.title = `${art.title} | Prisma Art Market`;
+      document.title = `${art.title} | Art Market`;
     }
   }, [art]);
 
