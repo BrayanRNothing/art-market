@@ -4,7 +4,7 @@ import WordsPullUp from './WordsPullUp';
 
 const Hero = ({ onExplore, onPublish }: { onExplore: () => void, onPublish: () => void }) => {
   return (
-    <section className="h-screen w-full p-4 md:p-6 overflow-hidden bg-black">
+    <section className="h-[100dvh] w-full p-2 md:p-6 overflow-hidden bg-black">
       <div className="relative w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden">
         {/* Background Video */}
         <video
@@ -21,7 +21,7 @@ const Hero = ({ onExplore, onPublish }: { onExplore: () => void, onPublish: () =
         <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
         {/* Hero Content */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 z-10">
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-12 z-10">
           <div className="grid grid-cols-12 gap-6 items-end">
             {/* Title */}
             <div className="col-span-12 lg:col-span-8">

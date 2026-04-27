@@ -36,7 +36,7 @@ const ArtGallery = ({ onArtClick }: ArtGalleryProps) => {
 
   return (
     <div className="min-h-screen bg-black p-4 md:p-6">
-      <div className="relative w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden bg-[#0d0d0d] min-h-[calc(100vh-120px)] flex flex-col">
+      <div className="relative w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden bg-[#0d0d0d] min-h-[calc(100dvh-120px)] flex flex-col">
         {/* Texture Overlay */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-noise" />
 
@@ -46,7 +46,7 @@ const ArtGallery = ({ onArtClick }: ArtGalleryProps) => {
           <div className="absolute bottom-[10%] left-[-5%] w-[400px] h-[400px] bg-primary/[0.02] rounded-full blur-[120px] opacity-30" />
         </div>
 
-        <div className="relative z-10 flex-1 flex flex-col pt-20 pb-16 px-6 md:px-12 lg:px-16 overflow-y-auto no-scrollbar">
+        <div className="relative z-10 flex-1 flex flex-col pt-16 pb-12 px-4 md:pt-20 md:pb-16 md:px-12 lg:px-16 overflow-y-auto no-scrollbar">
           <div className="max-w-7xl mx-auto w-full">
             <div className="flex flex-col mb-12 space-y-4">
               <motion.div
@@ -67,7 +67,7 @@ const ArtGallery = ({ onArtClick }: ArtGalleryProps) => {
             {loading ? (
               <ArtMarketSkeleton />
             ) : artworks.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
                 {artworks.map((piece, index) => (
                   <motion.div
                     key={piece.id}
@@ -102,7 +102,7 @@ const ArtGallery = ({ onArtClick }: ArtGalleryProps) => {
 
                     <div className="space-y-2 px-1">
                       <div className="flex justify-between items-start gap-4">
-                        <h3 className="text-[#e1e0cc] text-xl font-serif italic font-medium truncate flex-1">{piece.title}</h3>
+                        <h3 className="text-[#e1e0cc] text-base md:text-xl font-serif italic font-medium truncate flex-1">{piece.title}</h3>
                         <div className="px-2 py-0.5 border border-primary/5 rounded-full">
                           <span className="text-primary/20 text-[7px] uppercase tracking-widest font-black">Exhibición</span>
                         </div>
@@ -137,7 +137,7 @@ const ArtGallery = ({ onArtClick }: ArtGalleryProps) => {
               <motion.div 
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
-                className="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8"
+                className="mt-16 md:mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-[1px] bg-primary/10" />

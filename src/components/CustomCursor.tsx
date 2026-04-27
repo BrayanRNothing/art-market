@@ -24,7 +24,28 @@ const CustomCursor = ({ status = 'default' }: CustomCursorProps) => {
     loading: '#FFFFFF'
   };
 
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
   useEffect(() => {
+    const checkTouch = () => {
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+      setIsTouchDevice(hasTouch || isCoarse);
+    };
+    checkTouch();
+  }, []);
+
+  useEffect(() => {
+    if (!isTouchDevice) {
+      document.body.classList.add('custom-cursor-active');
+    } else {
+      document.body.classList.remove('custom-cursor-active');
+    }
+    return () => document.body.classList.remove('custom-cursor-active');
+  }, [isTouchDevice]);
+
+  useEffect(() => {
+    if (isTouchDevice) return;
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
@@ -59,6 +80,8 @@ const CustomCursor = ({ status = 'default' }: CustomCursorProps) => {
     const unsubscribeX = tiltX.on("change", (v) => rotateSpring.set(v));
     return () => unsubscribeX();
   }, [tiltX, rotateSpring]);
+
+  if (isTouchDevice) return null;
 
   return (
     <motion.div

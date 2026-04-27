@@ -32,7 +32,7 @@ export const ArtCardSkeleton = () => {
 
 export const ArtMarketSkeleton = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12">
       {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
         <ArtCardSkeleton key={i} />
       ))}

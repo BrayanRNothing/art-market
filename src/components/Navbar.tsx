@@ -19,89 +19,96 @@ const Navbar = ({ onContactClick, onProfileClick, onViewChange, isLoggedIn, user
     ...(isLoggedIn ? [{ label: "My Art", view: 'my-art' }] : [])
   ];
 
-  return (
-    <nav className="absolute top-0 left-0 right-0 z-50 flex justify-center pointer-events-none">
-      <div
-        className="relative bg-black px-8 py-2.5 md:px-12 md:py-3 flex items-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 pointer-events-auto rounded-b-[20px]"
-      >
-        {/* Notch Inverted Corner Left */}
-        <div className="absolute -left-[19px] top-0 w-[20px] h-[20px] pointer-events-none overflow-hidden">
-          <div className="w-full h-full rounded-tr-[20px] shadow-[0_0_0_40px_black]" />
-        </div>
-
-        {/* Notch Inverted Corner Right */}
-        <div className="absolute -right-[19px] top-0 w-[20px] h-[20px] pointer-events-none overflow-hidden">
-          <div className="w-full h-full rounded-tl-[20px] shadow-[0_0_0_40px_black]" />
-        </div>
-
-        <AnimatePresence mode="popLayout">
-          {navItems.map((item) => (
-            <motion.button
-              key={item.label}
-              layout
-              initial={{ opacity: 0, scale: 0.8, x: item.label === "My Art" ? -10 : 0 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                x: 0,
-                color: (item.view === currentView && item.label !== "Contact") ? '#e1e0cc' : 'rgba(225, 224, 204, 0.6)'
-              }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              whileHover={{ scale: 1.05 }}
-              onClick={() => {
-                if (item.label === "My Art") {
-                  if (isLoggedIn) {
-                    onViewChange('my-art');
-                  } else {
-                    onProfileClick(); // Open login
-                  }
-                } else if (item.view) {
-                  onViewChange(item.view as any);
-                }
-              }}
-              className={`relative text-[10px] sm:text-xs md:text-[13px] font-medium tracking-wide transition-colors duration-300 uppercase`}
-            >
-              {item.label === "My Art" && isLoggedIn && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: [0, 1, 0], scale: [0.5, 2, 0] }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
-                  className="absolute inset-0 bg-primary/30 rounded-full blur-md"
-                />
-              )}
-              {item.label}
-              {item.view === currentView && (
-                <motion.div layoutId="nav-underline" className="h-px bg-primary mt-0.5" />
-              )}
-            </motion.button>
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {/* Floating Action Buttons */}
-      <div className="absolute top-4 right-10 h-12 md:h-16 flex items-center gap-3 pointer-events-none">
+  const ActionButtons = ({ mobile = false }) => (
+    <div className={`flex items-center ${mobile ? 'gap-3 ml-2' : 'gap-3'}`}>
+      {!mobile && (
         <button
           onClick={onContactClick}
           title="Contacto"
-          className="w-8 h-8 bg-black border border-white/10 rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-black transition-all pointer-events-auto shadow-xl"
+          className="w-8 h-8 rounded-full flex items-center justify-center text-primary transition-all pointer-events-auto border border-white/10 bg-black hover:bg-primary hover:text-black shadow-xl"
         >
           <Contact size={14} />
         </button>
-        <button
-          onClick={onProfileClick}
-          title="Login / Logout"
-          className="w-8 h-8 bg-black border border-white/10 rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-black transition-all pointer-events-auto shadow-xl overflow-hidden"
-        >
-          {isLoggedIn && user ? (
-            user.avatar_url ? (
-              <img src={user.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-[10px] font-bold uppercase font-serif italic">{user.username[0]}</span>
-            )
+      )}
+      <button
+        onClick={onProfileClick}
+        title="Login / Logout"
+        className={`w-8 h-8 rounded-full flex items-center justify-center text-primary transition-all pointer-events-auto border border-white/10 overflow-hidden ${mobile ? 'bg-primary/10' : 'bg-black hover:bg-primary hover:text-black shadow-xl'}`}
+      >
+        {isLoggedIn && user ? (
+          user.avatar_url ? (
+            <img src={user.avatar_url} alt="Profile" className="w-full h-full object-cover" />
           ) : (
-            <User size={14} />
-          )}
-        </button>
+            <span className="text-[10px] font-bold uppercase font-serif italic">{user.username[0]}</span>
+          )
+        ) : (
+          <User size={14} />
+        )}
+      </button>
+    </div>
+  );
+
+  return (
+    <nav className="absolute top-0 left-0 right-0 z-50 flex justify-center md:pointer-events-none">
+      <div
+        className="relative w-full md:w-auto bg-black/90 md:bg-black backdrop-blur-md md:backdrop-blur-none px-4 py-3 md:px-12 md:py-3 flex items-center justify-between md:justify-center gap-4 pointer-events-auto md:rounded-b-[20px] border-b border-white/5 md:border-none"
+      >
+        {/* Notch Inverted Corner Left */}
+        <div className="hidden md:block absolute -left-[19px] top-0 w-[20px] h-[20px] pointer-events-none overflow-hidden">
+          <div className="w-full h-full rounded-tr-[20px] shadow-[0_0_0_40px_black]" />
+        </div>
+
+        {/* Nav Items Scrollable on Mobile */}
+        <div className="flex items-center gap-4 sm:gap-8 md:gap-10 lg:gap-12 overflow-x-auto no-scrollbar max-w-[calc(100%-80px)] md:max-w-none">
+          <AnimatePresence mode="popLayout">
+            {navItems.map((item) => (
+              <motion.button
+                key={item.label}
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  color: (item.view === currentView) ? '#e1e0cc' : 'rgba(225, 224, 204, 0.6)'
+                }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                whileHover={{ scale: 1.05 }}
+                onClick={() => {
+                  if (item.label === "My Art") {
+                    if (isLoggedIn) {
+                      onViewChange('my-art');
+                    } else {
+                      onProfileClick(); // Open login
+                    }
+                  } else if (item.view) {
+                    onViewChange(item.view as any);
+                  }
+                }}
+                className={`relative text-[11px] sm:text-xs md:text-[13px] font-medium tracking-wide transition-colors duration-300 uppercase whitespace-nowrap`}
+              >
+                {item.label}
+                {item.view === currentView && (
+                  <motion.div layoutId="nav-underline" className="h-px bg-primary mt-0.5" />
+                )}
+              </motion.button>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {/* Action Buttons inside Navbar for Mobile */}
+        <div className="md:hidden flex-shrink-0">
+          <ActionButtons mobile />
+        </div>
+
+        {/* Notch Inverted Corner Right */}
+        <div className="hidden md:block absolute -right-[19px] top-0 w-[20px] h-[20px] pointer-events-none overflow-hidden">
+          <div className="w-full h-full rounded-tl-[20px] shadow-[0_0_0_40px_black]" />
+        </div>
+      </div>
+
+      {/* Floating Action Buttons for Desktop */}
+      <div className="hidden md:flex absolute top-4 right-10 h-16 items-center pointer-events-none">
+        <ActionButtons />
       </div>
     </nav>
   );

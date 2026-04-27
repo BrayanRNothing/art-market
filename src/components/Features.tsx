@@ -17,7 +17,7 @@ const FeatureCard = ({ children, index, delay = 0 }: { children: React.ReactNode
         delay: index * 0.15 + delay,
         ease: [0.22, 1, 0.36, 1]
       }}
-      className="relative h-[480px] rounded-2xl overflow-hidden"
+      className="relative h-[380px] md:h-[480px] rounded-2xl overflow-hidden"
     >
       {children}
     </motion.div>
@@ -31,7 +31,7 @@ const Features = () => {
   ];
 
   return (
-    <section className="min-h-screen bg-black relative py-24 px-4 md:px-6">
+    <section className="min-h-screen bg-black relative py-16 px-4 md:py-24 md:px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <WordsPullUpMultiStyle 

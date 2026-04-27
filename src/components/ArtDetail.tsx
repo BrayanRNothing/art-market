@@ -98,7 +98,7 @@ const ArtDetail = ({ artId, onBack }: ArtDetailProps) => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full h-full bg-[#141414] text-[#e1e0cc] pt-12 lg:pt-16 pb-6 px-4 lg:px-8 relative overflow-hidden flex flex-col rounded-2xl lg:rounded-[2rem] border border-white/[0.03] shadow-[0_40px_100px_rgba(0,0,0,0.8)]"
+        className="w-full h-full bg-[#141414] text-[#e1e0cc] pt-12 lg:pt-16 pb-6 px-4 lg:px-8 relative overflow-y-auto lg:overflow-hidden flex flex-col rounded-2xl lg:rounded-[2rem] border border-white/[0.03] shadow-[0_40px_100px_rgba(0,0,0,0.8)] no-scrollbar"
       >
         {/* Texture Overlay */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-noise" />

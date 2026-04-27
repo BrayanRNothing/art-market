@@ -118,7 +118,7 @@ const AuthModal = ({ isOpen, onClose, isLoggedIn, onLogin, onLogout, onError }: 
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-screen w-full md:w-[35%] lg:w-[30%] bg-[#080808] border-l border-white/10 z-[151] p-8 md:p-10 flex flex-col shadow-2xl pointer-events-auto"
+            className="fixed top-0 right-0 h-screen w-full md:w-[35%] lg:w-[30%] bg-[#080808] border-l border-white/10 z-[151] p-8 md:p-10 flex flex-col shadow-2xl pointer-events-auto overflow-y-auto no-scrollbar"
           >
             <button onClick={onClose} className="absolute top-6 right-6 text-gray-500 hover:text-primary transition-colors z-[160]">
               <X size={20} />

@@ -7,9 +7,9 @@ const ArtistInvite = () => {
       <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.5rem] bg-[#101010] border border-white/5">
         <div className="absolute inset-0 bg-noise opacity-[0.05] pointer-events-none" />
         
-        <div className="relative z-10 px-8 py-16 md:px-20 md:py-24 grid md:grid-cols-2 gap-12 items-center">
+        <div className="relative z-10 px-6 py-12 md:px-20 md:py-24 grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-primary text-4xl md:text-6xl font-medium leading-[1.1] mb-8">
+            <h2 className="text-primary text-3xl md:text-6xl font-medium leading-[1.1] mb-8">
               ¿Eres artista? <br />
               <span className="text-gray-500 italic font-serif">Muestra tu visión al mundo.</span>
             </h2>
@@ -22,7 +22,7 @@ const ArtistInvite = () => {
             </button>
           </div>
           
-          <div className="relative aspect-square md:aspect-video rounded-2xl overflow-hidden">
+          <div className="relative aspect-video rounded-2xl overflow-hidden">
             <img 
               src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=1000&auto=format&fit=crop" 
               alt="Art Creation" 

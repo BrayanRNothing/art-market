@@ -498,7 +498,7 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
               {filteredArtworks.length > 0 ? (
                 <motion.div
                   layout
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12 w-full"
+                  className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-8 md:gap-y-12 w-full"
                 >
                   {filteredArtworks.map((art, index) => (
                     <motion.div
@@ -563,7 +563,7 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
 
                       <div className="space-y-2 px-1">
                         <div className="flex justify-between items-start gap-4">
-                          <h3 className="text-[#e1e0cc] text-xl font-serif italic font-medium truncate flex-1">{art.title}</h3>
+                          <h3 className="text-[#e1e0cc] text-base md:text-xl font-serif italic font-medium truncate flex-1">{art.title}</h3>
                           <div className="flex flex-col items-end">
                             <span className="text-primary font-bold text-sm">
                               {art.status === 'sale' ? art.price : 'Exhibición'}

@@ -27,7 +27,7 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="fixed inset-0 flex items-center justify-center z-[101] p-4 pointer-events-none"
           >
-            <div className="bg-[#0A0A0A] border border-white/10 w-full max-w-4xl rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row pointer-events-auto shadow-2xl relative">
+            <div className="bg-[#0A0A0A] border border-white/10 w-full max-w-4xl rounded-[1.5rem] md:rounded-[2.5rem] overflow-y-auto md:overflow-hidden max-h-[90dvh] flex flex-col md:flex-row pointer-events-auto shadow-2xl relative no-scrollbar">
               
               {/* Close Button */}
               <button 
@@ -38,10 +38,10 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
               </button>
 
               {/* Left Side: Info */}
-              <div className="w-full md:w-2/5 bg-primary p-10 md:p-14 flex flex-col justify-between text-black">
+              <div className="w-full md:w-2/5 bg-primary p-8 md:p-14 flex flex-col justify-between text-black">
                 <div>
-                  <h2 className="text-4xl md:text-5xl font-medium leading-tight mb-6 italic font-serif">Let's Talk Art.</h2>
-                  <p className="text-black/70 text-sm md:text-base leading-relaxed mb-12">
+                  <h2 className="text-3xl md:text-5xl font-medium leading-tight mb-4 md:mb-6 italic font-serif">Let's Talk Art.</h2>
+                  <p className="text-black/70 text-xs md:text-base leading-relaxed mb-8 md:mb-12">
                     Si tienes dudas sobre cómo publicar, necesitas soporte técnico o simplemente quieres colaborar con nosotros.
                   </p>
                   
@@ -63,9 +63,9 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
               </div>
 
               {/* Right Side: Form */}
-              <div className="w-full md:w-3/5 p-10 md:p-14">
-                <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="w-full md:w-3/5 p-8 md:p-14">
+                <form className="space-y-6 md:space-y-8" onSubmit={(e) => e.preventDefault()}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">Tu Nombre</label>
                       <input 
