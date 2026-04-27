@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 
 const ArtistInvite = () => {
   return (
-    <section className="bg-black py-24 px-4 md:px-6">
+    <section className="bg-black py-24 px-2 md:px-6">
       <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2.5rem] bg-[#101010] border border-white/5">
         <div className="absolute inset-0 bg-noise opacity-[0.05] pointer-events-none" />
         

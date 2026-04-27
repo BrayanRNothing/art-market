@@ -31,7 +31,7 @@ const Features = () => {
   ];
 
   return (
-    <section className="min-h-screen bg-black relative py-16 px-4 md:py-24 md:px-6">
+    <section className="min-h-screen bg-black relative py-16 px-2 md:py-24 md:px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <WordsPullUpMultiStyle 

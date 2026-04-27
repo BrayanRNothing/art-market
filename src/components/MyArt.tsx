@@ -181,7 +181,7 @@ const MyArt = ({ user, onUpdateUser, onArtClick }: { user: any, onUpdateUser: (u
   const tabs = ['Vista General', 'En Venta', 'Exhibición'];
 
   return (
-    <div className="min-h-screen bg-black p-4 md:p-6 relative">
+    <div className="min-h-screen bg-black p-2 md:p-6 relative">
       <div className="relative w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden bg-[#080808]">
 
         {/* Banner Section */}

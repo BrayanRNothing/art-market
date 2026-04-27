@@ -35,7 +35,7 @@ const ArtGallery = ({ onArtClick }: ArtGalleryProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black p-4 md:p-6">
+    <div className="min-h-screen bg-black p-2 md:p-6">
       <div className="relative w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden bg-[#0d0d0d] min-h-[calc(100dvh-120px)] flex flex-col">
         {/* Texture Overlay */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-noise" />

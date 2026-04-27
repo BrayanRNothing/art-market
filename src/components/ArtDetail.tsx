@@ -92,7 +92,7 @@ const ArtDetail = ({ artId, onBack }: ArtDetailProps) => {
   };
 
   return (
-    <div className="min-h-screen lg:h-screen bg-black p-4 lg:p-6 overflow-hidden relative">
+    <div className="min-h-screen lg:h-screen bg-black p-2 lg:p-6 overflow-hidden relative">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

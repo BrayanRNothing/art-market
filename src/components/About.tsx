@@ -9,7 +9,7 @@ const About = () => {
   ];
 
   return (
-    <section className="bg-black py-16 px-4 md:py-24 md:px-6">
+    <section className="bg-black py-16 px-2 md:py-24 md:px-6">
       <div className="max-w-7xl mx-auto bg-[#101010] rounded-[2rem] p-6 md:p-16 text-center border border-white/5">
         <span className="text-primary text-[10px] sm:text-xs uppercase tracking-widest mb-8 block">
           Marketplace
