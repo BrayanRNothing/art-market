@@ -166,7 +166,7 @@ const ArtDetail = ({ artId, onBack }: ArtDetailProps) => {
               transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="flex-1 flex items-center justify-center min-h-0 relative px-2 lg:px-12"
             >
-              <div className="relative w-full h-full max-h-[55vh] lg:max-h-full rounded-2xl overflow-hidden bg-black/40 shadow-2xl shadow-black/80 group">
+              <div className="relative w-full h-full max-h-[40vh] md:max-h-[55vh] lg:max-h-full rounded-2xl overflow-hidden bg-black/40 shadow-2xl shadow-black/80 group">
                 {/* Background Ambient Blur - Fills the empty space for different aspect ratios */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                   <AnimatePresence mode="wait">
@@ -225,7 +225,7 @@ const ArtDetail = ({ artId, onBack }: ArtDetailProps) => {
                     initial={{ opacity: 0, filter: 'blur(15px)', scale: 0.9, y: 10 }}
                     animate={{ opacity: 1, filter: 'blur(0px)', scale: 1, y: 0 }}
                     transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="text-4xl lg:text-5xl font-serif italic font-bold tracking-tighter leading-[0.9] text-white"
+                    className="text-3xl md:text-4xl lg:text-5xl font-serif italic font-bold tracking-tighter leading-[0.9] text-white"
                   >
                     {art.title}
                   </motion.h1>
@@ -245,7 +245,7 @@ const ArtDetail = ({ artId, onBack }: ArtDetailProps) => {
                         )}
                       </div>
                       <div>
-                        <h4 className="text-primary font-serif italic text-xl leading-none mb-1.5">{art.artist_name}</h4>
+                        <h4 className="text-primary font-serif italic text-lg md:text-xl leading-none mb-1.5">{art.artist_name}</h4>
                         <div className="flex items-center gap-4 text-primary/30 text-[9px] uppercase tracking-widest font-black">
                           <span className="flex items-center gap-1.5"><Maximize size={10} /> {art.dimensions || 'Dimensiones variables'}</span>
                           <span className="flex items-center gap-1.5"><Layers size={10} /> {art.technique || 'Técnica mixta'}</span>
@@ -301,7 +301,7 @@ const ArtDetail = ({ artId, onBack }: ArtDetailProps) => {
                 {/* 2. Description Section */}
                 <div className="py-8 border-t border-white/10 space-y-4">
                   <p className="text-primary/20 text-[9px] uppercase tracking-[0.3em] font-black">Descripción</p>
-                  <p className="text-primary/60 text-base leading-relaxed font-light italic pr-4">
+                  <p className="text-primary/60 text-sm md:text-base leading-relaxed font-light italic pr-4">
                     "{art.description || "Esta obra explora la intersección entre la luz natural y las formas geométricas orgánicas."}"
                   </p>
                 </div>
