@@ -16,6 +16,12 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
+// Fijar headers de seguridad
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  next();
+});
+
 // Logger para depuración
 app.use((req, res, next) => {
   console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
