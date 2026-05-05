@@ -59,7 +59,7 @@ const Navbar = ({ onContactClick, onProfileClick, onViewChange, isLoggedIn, user
         </div>
 
         {/* Nav Items Scrollable on Mobile */}
-        <div className="flex items-center gap-4 sm:gap-8 md:gap-10 lg:gap-12 overflow-x-auto no-scrollbar max-w-[calc(100%-80px)] md:max-w-none">
+        <div className="flex items-center gap-4 sm:gap-8 md:gap-10 lg:gap-12 overflow-x-auto md:overflow-visible no-scrollbar max-w-[calc(100%-80px)] md:max-w-none">
           <AnimatePresence mode="popLayout">
             {navItems.map((item) => (
               <motion.button
